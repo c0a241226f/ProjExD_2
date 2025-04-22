@@ -13,6 +13,8 @@ DELTA = {
     pg.K_RIGHT: (+5,0),
 }
 #辞書の定理
+
+#飛ぶ方向の切り替え
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -30,15 +32,37 @@ def check_bound(rct:pg.Rect) -> tuple[bool, bool]:
     if rct.top < 0 or HEIGHT < rct.bottom :
         tate =False  
     return yoko, tate
-    
 
+
+#gameoverの表示
+def gameover(screen: pg.Surface.set_alpha) -> None:
+    screen = pg.display.set_mode((1100, 650))
+    time = pg.time.Clock()
+    #time.tick(1)
+    fonto = pg.font.Font(None, 80)
+    txt = fonto.render("Game Over",True, (255, 255, 255))
+    kkc_img = pg.transform.rotozoom(pg.image.load("fig/8.png"),0, 0.9)
+    #black_img = pg.Rect(1600,900)
+    screen.blit(txt,[250, 200])
+    screen.blit(kkc_img,[200, 200])
+    screen.blit(kkc_img,[600, 200])
+    #screen.blit(black_img)
+    pg.display.update()
+    time.tick(5)
+
+
+#def get_kk_img(sum_mv: tuple[int, int]) -> pg.Surface) -> pg.Surface
+    
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
-    bg_img = pg.image.load("fig/pg_bg.jpg")    
-    kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
+    bg_img = pg.image.load("fig/pg_bg.jpg") 
+    sx=0
+    sy=0.9 
+    kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), sx, sy)
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
+    
     #↓爆弾の描写
     bb_img = pg.Surface((20, 20))
     pg.draw.circle(bb_img, (255, 0, 0), (10, 10), 10)
@@ -46,6 +70,8 @@ def main():
     bb_rct.center = random.randint(0, WIDTH),random.randint(0,HEIGHT)
     bb_img.set_colorkey((0, 0, 0))  #色黒
     vx,vy = +5,+5 #爆弾の速さ
+    
+    
     clock = pg.time.Clock()
     tmr = 0
 
@@ -57,7 +83,7 @@ def main():
         screen.blit(bg_img, [0, 0]) 
 
         if kk_rct.colliderect(bb_rct):
-            print("GAME OVER")
+            gameover(screen)
             return
         
         key_lst = pg.key.get_pressed()
@@ -67,8 +93,7 @@ def main():
             if key_lst[key]:
                 sum_mv[0] += mv[0] #上下方向
                 sum_mv[1] += mv[1] #左右方向
-
-
+       
 
       #  if key_lst[pg.K_UP]:
       #      sum_mv[1] -= 5
@@ -90,6 +115,7 @@ def main():
         if not tate:
             vy *= -1    
         screen.blit(bb_img, bb_rct)   #爆弾の表示
+        
         pg.display.update()
         tmr += 1
         clock.tick(50)
