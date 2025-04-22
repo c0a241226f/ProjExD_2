@@ -6,16 +6,16 @@ import pygame as pg
 
 
 WIDTH, HEIGHT = 1100, 650
-#画面のサイズ
+# 画面のサイズ
 DELTA = {
-    pg.K_UP: (0,-5),
-    pg.K_DOWN: (0,+5),
-    pg.K_LEFT: (-5,0),
+    pg.K_UP:    (0,-5),
+    pg.K_DOWN:  (0,+5),
+    pg.K_LEFT:  (-5,0),
     pg.K_RIGHT: (+5,0),
 }
-#辞書の定理
+# 辞書の定理
 
-#飛ぶ方向の切り替え
+# 飛ぶ方向の切り替え
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -27,15 +27,15 @@ def check_bound(rct:pg.Rect) -> tuple[bool, bool]:
 
     """
     yoko, tate = True, True
-    #縦横方向判定
-    if rct.left < 0 or WIDTH < rct.right: #画面外の話
+    # 縦横方向判定
+    if rct.left < 0 or WIDTH < rct.right: # 画面外の話
        yoko = False
     if rct.top < 0 or HEIGHT < rct.bottom :
         tate =False  
     return yoko, tate
 
 
-#gameoverの表示
+# gameoverの表示
 def gameover(screen: pg.Surface.set_alpha) -> None:
     screen = pg.display.set_mode((1100, 650))
     fonto = pg.font.Font(None, 80)
@@ -48,13 +48,13 @@ def gameover(screen: pg.Surface.set_alpha) -> None:
     #screen.blit(black_img)
     pg.display.update()
     time.sleep(5)
-#爆弾を変化
+# 爆弾を変化
 def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
     bb_accs = [a for a in range(1,11)]
     for r in range (1,11):
         bb_img = pg.Surface((20*r, 20*r))
         pg.draw.circle(bb_img,(255,0,0),(10*r,10*r),10*r)
-#こうかとんの向きを変える
+# こうかとんの向きを変える
 def get_kk_img(sum_mv: tuple[int, int]) -> pg.Surface:
     key_lst = pg.key.get_pressed()
     sum_mv = [0, 0]
@@ -64,8 +64,8 @@ def get_kk_img(sum_mv: tuple[int, int]) -> pg.Surface:
                 sum_mv[1] += mv[1] #左右方向
                 return
 
-#追従型   
-#メインコード
+# 追従型   
+# メインコード
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -76,13 +76,13 @@ def main():
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
     
-    #↓爆弾の描写
+    # ↓爆弾の描写
     bb_img = pg.Surface((20, 20))
     pg.draw.circle(bb_img, (255, 0, 0), (10, 10), 10)
     bb_rct = bb_img.get_rect()
     bb_rct.center = random.randint(0, WIDTH),random.randint(0,HEIGHT)
-    bb_img.set_colorkey((0, 0, 0))  #色黒
-    vx,vy = +5,+5 #爆弾の速さ
+    bb_img.set_colorkey((0, 0, 0))  # 色黒
+    vx,vy = +5,+5 # 爆弾の速さ
     
     
     clock = pg.time.Clock()
@@ -121,13 +121,13 @@ def main():
             kk_rct.move_ip(-sum_mv[0],-sum_mv[1])
 
         screen.blit(kk_img, kk_rct)
-        bb_rct.move_ip(vx,vy)         #爆弾の移動
+        bb_rct.move_ip(vx,vy)         # 爆弾の移動
         yoko, tate =check_bound(bb_rct)
         if not yoko:
             vx *= -1
         if not tate:
             vy *= -1    
-        screen.blit(bb_img, bb_rct)   #爆弾の表示
+        screen.blit(bb_img, bb_rct)   # 爆弾の表示
         
         pg.display.update()
         tmr += 1
