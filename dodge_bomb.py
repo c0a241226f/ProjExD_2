@@ -1,6 +1,7 @@
 import os
 import random
 import sys
+import time
 import pygame as pg
 
 
@@ -37,8 +38,6 @@ def check_bound(rct:pg.Rect) -> tuple[bool, bool]:
 #gameoverの表示
 def gameover(screen: pg.Surface.set_alpha) -> None:
     screen = pg.display.set_mode((1100, 650))
-    time = pg.time.Clock()
-    #time.tick(1)
     fonto = pg.font.Font(None, 80)
     txt = fonto.render("Game Over",True, (255, 255, 255))
     kkc_img = pg.transform.rotozoom(pg.image.load("fig/8.png"),0, 0.9)
@@ -48,18 +47,32 @@ def gameover(screen: pg.Surface.set_alpha) -> None:
     screen.blit(kkc_img,[600, 200])
     #screen.blit(black_img)
     pg.display.update()
-    time.tick(5)
+    time.sleep(5)
+#爆弾を変化
+def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
+    bb_accs = [a for a in range(1,11)]
+    for r in range (1,11):
+        bb_img = pg.Surface((20*r, 20*r))
+        pg.draw.circle(bb_img,(255,0,0),(10*r,10*r),10*r)
+#こうかとんの向きを変える
+def get_kk_img(sum_mv: tuple[int, int]) -> pg.Surface:
+    key_lst = pg.key.get_pressed()
+    sum_mv = [0, 0]
+    for key, mv in DELTA.items():
+            if key_lst[key]:
+                sum_mv[0] += mv[0] #上下方向
+                sum_mv[1] += mv[1] #左右方向
+                return
 
-
-#def get_kk_img(sum_mv: tuple[int, int]) -> pg.Surface) -> pg.Surface
-    
+#追従型   
+#メインコード
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
     bg_img = pg.image.load("fig/pg_bg.jpg") 
-    sx=0
-    sy=0.9 
-    kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), sx, sy)
+    kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
+    #kk_img = get_kk_img((0,0))
+    #kk_img = get_kk_img(tuple(sum_mv))
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
     
